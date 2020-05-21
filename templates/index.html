@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>帧数统计</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
+    </script>
+</head>
+
+<body>
+    <div class="panel panel-primary">
+        <div class="panel-heading">帧数曲线</div>
+        <div class="panel-body" id="main" style="width: 600px;height:400px;">
+
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary" id="btn_refresh">刷新</button>
+    <script src="/static/echarts.min.js"></script>
+    <script>
+        var refresh_charts = function (data) {
+            var myChart = echarts.init(document.getElementById('main'));
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '帧数曲线'
+                },
+                legend: {
+                    data: ['帧数']
+                },
+                xAxis: {},
+                yAxis: {},
+                series: [{
+                    data: data,
+                    type: 'line',
+                    smooth: true
+                }]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        }
+
+        $("#btn_refresh").on("click", function () {
+            $.ajax({
+                url: "/fps_get",
+                type: "POST",
+                dataType: 'JSON',
+                data: JSON.stringify({filter_dict: {
+                    page: "https://egame.com/home"
+                }}),
+                success: function (data) {
+                    data_list = []
+                    for (let index = 0; index < data.data.length; index++) {
+                        const ele = data.data[index];
+                        data_list.push(...ele.cur_fps_list)
+                    }
+                    refresh_charts(data_list);
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>

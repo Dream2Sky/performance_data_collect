@@ -1,0 +1,14 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.douban.com/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+
+[packages]
+tornado = "*"
+pymongo = "*"
+
+[requires]
+python_version = "3.8"
